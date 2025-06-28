@@ -23,6 +23,17 @@ tier_2_cities={"Jaipur", "Chandigarh", "Indore", "Lucknow", "Patna", "Ranchi", "
 app=FastAPI()    
 
 
+
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or restrict to your frontend's domain
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 #Pydantic validation for the user input
 class InputData(BaseModel):
 
@@ -36,10 +47,10 @@ class InputData(BaseModel):
        'business_owner', 'unemployed', 'private_job'], Field(...,max_length=25,description="Occupation of the user")]
     
 
-    # @field_validator("city")
-    # @classmethod
-    # def city_capital(cls,value):
-    #     return value.capitalize()
+    @field_validator("city")
+    @classmethod
+    def city_capital(cls,value):
+        return value.capitalize()
     
     #calculate BMI of the user
     @computed_field
@@ -99,14 +110,4 @@ def predict_premium(data: InputData):
     prediction = model.predict(input_df)[0]
 
     return JSONResponse(status_code=200, content={'predicted_category': prediction})
-
-
-
-
-    
-
-
-    
-    
-   
 
