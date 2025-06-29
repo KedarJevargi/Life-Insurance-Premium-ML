@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from schema.inputdata import InputData 
+from schema.outputdata import OutputData
 from model.predict import predict_output,MODEL_VERSION
 
 
@@ -29,7 +30,7 @@ def health_check():
             "version":MODEL_VERSION}
 
 
-@app.post("/predict")
+@app.post("/predict", response_model=OutputData)
 def predict_premium(data: InputData):
 
     input_dict = {
@@ -42,5 +43,5 @@ def predict_premium(data: InputData):
     }
     
     prediction =predict_output(input_dict)
-    return JSONResponse(status_code=200, content={'predicted_category': prediction})
+    return JSONResponse(status_code=200, content={'response': prediction})
 
